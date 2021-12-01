@@ -107,11 +107,18 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 								net->SendMoveObj(i, WALL_ID_LEFT);
 								net->GameObjects[WALL_ID_RIGHT]->pos.x = WINDOW_WIDTH / 4;
 								net->SendMoveObj(i, WALL_ID_RIGHT);
+
 								for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
-									//net->SendRemoveObj(i, j);
+									if (false == net->GameObjects[j]->isActive) continue;
+									net->SendRemoveObj(i, j);
 								}
 								net->SendRemoveObj(i, id);
 								net->SendChangeScene(id, (char)SCENE::gameover);
+								net->GameObjects[i]->pos.x = (short)800;
+								net->GameObjects[i]->pos.y = (short)900;
+								for (int k = 0; k < MAX_USER; ++k)
+									if (net->GameObjects[k]->isActive)
+										net->SendMoveObj(k, i);
 							}
 
 						}
@@ -174,9 +181,18 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 									net->GameObjects[WALL_ID_RIGHT]->pos.x = WINDOW_WIDTH / 4;
 									net->SendMoveObj(i, WALL_ID_RIGHT);
 
-
+									for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
+										if (false == net->GameObjects[j]->isActive) continue;
+										net->SendRemoveObj(i, j);
+									}
 									net->SendRemoveObj(i, obj->id);
 									net->SendChangeScene(obj->id, (char)SCENE::gameover);
+
+									net->GameObjects[i]->pos.x = (short)800;
+									net->GameObjects[i]->pos.y = (short)900;
+									for (int k = 0; k < MAX_USER; ++k) 
+										if (net->GameObjects[k]->isActive)
+											net->SendMoveObj(k, i);
 								}
 							}
 						}

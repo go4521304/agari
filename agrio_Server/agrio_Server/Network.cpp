@@ -201,6 +201,19 @@ void Network::Update(float elapsedTime) {
 				CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
 				CUR_WINDOW_START_X = 15;
 				CUR_WINDOW_START_Y = 15;
+				for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
+					if (false == GameObjects[j]->isActive) continue;
+					SendRemoveObj(i, j);
+				}
+				for (int j = 8; j < 20; ++j) {
+					GameObjects[j]->isActive = true;
+					GameObjects[j]->pos = Coordinate{ short(BLOCK_WIDTH * rand() % CUR_WINDOW_WIDTH),  short(BLOCK_HEIGHT * rand() % CUR_WINDOW_HEIGHT) };
+					GameObjects[j]->width = BLOCK_WIDTH;
+					GameObjects[j]->height = BLOCK_HEIGHT;
+					GameObjects[j]->sprite = (int)SPRITE::box;
+					GameObjects[j]->type = BOX;
+					GameObjects[j]->id = i;
+				}
 			}
 		}
 		ready_count = 0;
