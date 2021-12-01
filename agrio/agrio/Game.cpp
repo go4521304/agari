@@ -63,8 +63,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpszCmdPar
 
 void GameLoop(HWND hWnd)
 {
-	const int FrameRate = 1000 / 60;
-	while (GetTickCount64() - TIMER < FrameRate);
+	const long long FrameRate = 1000 / 30;
+	while (GetTickCount64() < TIMER + FrameRate);
 
 	if (scene == SCENE::title)
 	{
