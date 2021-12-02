@@ -67,7 +67,7 @@ enum class SPRITE
 // Win API
 MSG Message;
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = _T("이름을 몰로 할까요????");
+LPCTSTR lpszClass = _T("아가리오 ~몰?루~");
 
 // SOCKET
 SOCKET sock;

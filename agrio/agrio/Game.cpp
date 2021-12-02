@@ -215,8 +215,6 @@ void GameLoop(HWND hWnd)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	srand((unsigned int)time(NULL));
-
 	HDC hdc, memdc1, memdc2;
 	PAINTSTRUCT ps;
 
@@ -316,9 +314,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//gameObject[99]->test();
 		/////////////////////////////////////////////////////////////////////////////////////////
-
-		//TIMER = GetTickCount64();
-		//SetTimer(hWnd, 0, 10, (TIMERPROC)TimerProc);	// updateLoop
 	}
 	break;
 
@@ -627,7 +622,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				while (!isLoginOk);
 				scene = SCENE::lobby;
 				play_button = false;
-				//InvalidateRect(hWnd, NULL, false);
 			}
 			else if (exit_button == true)
 			{
@@ -642,8 +636,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				scene = SCENE::title;
 				replay_button = false;
-
-				//InvalidateRect(hWnd, NULL, false);
 			}
 			else if (exit2_button == true)
 			{
@@ -861,153 +853,7 @@ void ConnectServer()
 	packet.playerSkin = (char)selPlayer;
 	Send(&packet);
 }
-/*
-void CALLBACK TimerProc(HWND hWnd, UINT uMSG, UINT idEvent, DWORD dwTime)
-{
-	// idEvent에 메세지가 담겨져서 옴 근데 안쓸 예정
-	if (scene == SCENE::title)
-	{
-		selTimer -= GetTickCount64() - TIMER;
-		if (selTimer < 0)
-		{
-			selAnimation++;
-			selAnimation %= 4;
-			selTimer = ANIMATION_TIME;
-		}
-	}
 
-	else if (scene == SCENE::gameover || scene == SCENE::winner)
-	{
-
-	}
-
-	// lobby, stage1, stage2 등등등...
-	else
-	{
-		Player* p = reinterpret_cast<Player*>(gameObject[playerID]);
-		if (keyAction.reqSend)
-		{
-			STATE oldState = p->GetState();
-
-			if (keyAction.left && keyAction.up)
-				p->SetDir(DIR::NW);
-
-			else if (keyAction.right && keyAction.up)
-				p->SetDir(DIR::NE);
-
-			else if (keyAction.left && keyAction.down)
-				p->SetDir(DIR::SW);
-
-			else if (keyAction.right && keyAction.down)
-				p->SetDir(DIR::SE);
-
-			else if (keyAction.left)
-				p->SetDir(DIR::W);
-
-			else if (keyAction.right)
-				p->SetDir(DIR::E);
-
-			else if (keyAction.up)
-				p->SetDir(DIR::N);
-
-			else if (keyAction.down)
-				p->SetDir(DIR::S);
-
-
-			if (keyAction.left == false && keyAction.right == false && keyAction.up == false && keyAction.down == false)
-			{
-				if (p->GetState() != STATE::idle)
-					SendStatePacket(STATE::idle);
-			}
-			else
-			{
-				cs_packet_player_move sendPacket;
-				sendPacket.packetSize = sizeof(sendPacket);
-				sendPacket.packetType = CS_PACKET_PLAYER_MOVE;
-				sendPacket.dir = (char)p->GetDir();
-				Send(&sendPacket);
-
-				if (p->GetState() != STATE::move)
-					SendStatePacket(STATE::move);
-			}
-
-			if (keyAction.space)
-			{
-				SendStatePacket(STATE::attack);
-			}
-			keyAction.reqSend = false;
-		}
-
-		if (itemTimer >= 0)
-			itemTimer -= GetTickCount64() - TIMER;
-
-		if (keyAction.space)
-		{
-			//itemTimer -= GetTickCount64() - TIMER;
-
-			if (itemTimer < 0)
-			{
-				if (selectedWeapon == pistol || selectedWeapon == uzi || selectedWeapon == shotgun)
-				{
-					cs_packet_shoot_bullet sendPacket;
-					sendPacket.packetSize = sizeof(sendPacket);
-					sendPacket.packetType = CS_PACKET_SHOOT_BULLET;
-					sendPacket.playerID = playerID;
-					Send(&sendPacket);
-
-					p->UseItem(selectedWeapon - 1);	// 플레이어가 가지고 있는 개수 수정
-					itemTimer = ITEM_TIME[selectedWeapon - 1];	// 선택한 무기의 발사 시간으로
-				}
-
-				else if (selectedWeapon == potion || selectedWeapon == box)
-				{
-					cs_packet_used_item sendPacket;
-					sendPacket.packetSize = sizeof(sendPacket);
-					sendPacket.packetType = CS_PACKET_USED_ITEM;
-					sendPacket.itemNum = selectedWeapon;
-					Send(&sendPacket);
-
-					p->UseItem(selectedWeapon - 1);	// 플레이어가 가지고 있는 개수 수정
-					itemTimer = ITEM_TIME[selectedWeapon - 1];	// 선택한 무기의 발사 시간으로
-				}
-			}
-		}
-
-		for (int i = 0; i < 3; ++i)
-		{
-			Player* player = reinterpret_cast<Player*>(gameObject[i]);
-			if (player->GetState() == STATE::idle)
-			{
-				player->animFrame = 2;
-				player->animTimer = 0;
-			}
-			else
-			{
-				player->animTimer -= GetTickCount64() - TIMER;
-				if (player->animTimer < 0)
-				{
-					player->animFrame++;
-					player->animTimer = ANIMATION_TIME;
-
-					if (player->GetState() == STATE::attack)
-					{
-						player->animFrame %= 2;
-
-						// std::cout << player->animFrame << std::endl;
-
-					}
-					else
-						player->animFrame %= 4;
-
-				}
-			}
-		}
-	}
-
-	TIMER = GetTickCount64();
-	//InvalidateRect(hWnd, NULL, false);
-}
-*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Send(void* Packet)
