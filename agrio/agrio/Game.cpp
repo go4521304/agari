@@ -636,6 +636,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				scene = SCENE::title;
 				replay_button = false;
+
+				cs_packet_replay sendPacket;
+				sendPacket.packetSize = sizeof(sendPacket);
+				sendPacket.packetType = CS_PACKET_REPLAY;
+				sendPacket.sceneNum = (char)scene;
+				Send(&sendPacket);
 			}
 			else if (exit2_button == true)
 			{
