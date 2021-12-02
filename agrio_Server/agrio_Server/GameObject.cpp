@@ -534,6 +534,19 @@ bool Player::Recv() {
 		}
 	}
 	break;
+	case CS_PACKET_REPLAY:
+	{
+		net->MyScene = SCENE::stage1;
+		CUR_WINDOW_WIDTH = WINDOW_WIDTH * 0.75f;
+		CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
+		CUR_WINDOW_START_X = 15;
+		CUR_WINDOW_START_Y = 15;
+		for (int j = WALL_ID_RIGHT + 1; j < MAX_OBJECT; ++j) {
+			if (false == net->GameObjects[j]->isActive) continue;
+			net->SendRemoveObj(id, j);
+		}
+	}
+	break;
 	default:
 		std::cout << "잘못된 패킷 전송";
 		break;

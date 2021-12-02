@@ -206,9 +206,11 @@ void Network::Update(float elapsedTime) {
 					if (false == GameObjects[j]->isActive) continue;
 					SendRemoveObj(i, j);
 				}
+				GameObjects[i]->isReady = false;
 			}
 		}
 		ready_count = 0;
+
 	}
 
 	if (MyScene == SCENE::stage1) {
@@ -273,8 +275,8 @@ void Network::Update(float elapsedTime) {
 				Player* p = reinterpret_cast<Player*>(GameObjects[i]);
 				if (p->hp > 0)
 					SendChangeScene(i, (char)SCENE::winner);
-				MyScene = SCENE::winner;
 			}
+			MyScene = SCENE::lobby;
 		}
 	}
 
