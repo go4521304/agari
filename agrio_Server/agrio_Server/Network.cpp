@@ -149,7 +149,8 @@ void Network::SendRemoveObj(int id, int victm) {
 	sendPacket.packetType = SC_PACKET_REMOVE_OBJ;
 	sendPacket.objectID = victm;
 	GameObjects[victm]->collisionCount = 0;
-	GameObjects[victm]->isActive = false;
+	if (false == IsPlayer(victm))
+		GameObjects[victm]->isActive = false;
 
 	reinterpret_cast<Player*>(GameObjects[id])->UpdateBuf(&sendPacket, sendPacket.packetSize);
 }
@@ -174,7 +175,9 @@ void Network::SendChangeWeapon(int id, int target)
 
 	reinterpret_cast<Player*>(GameObjects[id])->UpdateBuf(&sendPacket, sendPacket.packetSize);
 }
-
+std::random_device rd;
+std::mt19937 mt{ rd() };
+std::uniform_int_distribution<int> dist{ 1, 32767 };
 void Network::Update(float elapsedTime) {
 	int bufstart = 0;
 	for (auto obj : GameObjects) {
@@ -192,7 +195,7 @@ void Network::Update(float elapsedTime) {
 				ready_count++;
 			};
 		}
-		
+
 		if (ready_count == MAX_USER) {
 			for (int i = 0; i < MAX_USER; ++i) {
 				SendChangeScene(i, (char)SCENE::stage1);
@@ -201,12 +204,46 @@ void Network::Update(float elapsedTime) {
 				CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
 				CUR_WINDOW_START_X = 15;
 				CUR_WINDOW_START_Y = 15;
+				for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
+					if (false == GameObjects[j]->isActive) continue;
+					SendRemoveObj(i, j);
+				}
+				for (int j = 8; j < 20; ++j) {
+					GameObjects[j]->isActive = true;
+					GameObjects[j]->pos = Coordinate{ short(BLOCK_WIDTH * dist(mt) % CUR_WINDOW_WIDTH),  short(BLOCK_HEIGHT * dist(mt) % CUR_WINDOW_HEIGHT) };
+					GameObjects[j]->width = BLOCK_WIDTH;
+					GameObjects[j]->height = BLOCK_HEIGHT;
+					GameObjects[j]->sprite = (int)SPRITE::box;
+					GameObjects[j]->type = BOX;
+					GameObjects[j]->id = i;
+				}
 			}
 		}
 		ready_count = 0;
 	}
 
 	if (MyScene == SCENE::stage1) {
+
+		if (std::chrono::system_clock::now() - preWallMoveTime > std::chrono::seconds(WallMoveTime)) {
+			preWallMoveTime = std::chrono::system_clock::now();
+			CUR_WINDOW_START_X += 1;
+			CUR_WINDOW_START_Y += 1;
+			CUR_WINDOW_WIDTH -= 2;
+			CUR_WINDOW_HEIGHT -= 2;
+			GameObjects[WALL_ID_UP]->pos.y += 1;
+			GameObjects[WALL_ID_DOWN]->pos.y -= 1;
+
+			GameObjects[WALL_ID_LEFT]->pos.x += 1;
+			GameObjects[WALL_ID_RIGHT]->pos.x -= 1;
+
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (false == GameObjects[j]->isActive) continue;
+				SendMoveObj(j, WALL_ID_UP);
+				SendMoveObj(j, WALL_ID_DOWN);
+				SendMoveObj(j, WALL_ID_LEFT);
+				SendMoveObj(j, WALL_ID_RIGHT);
+			}
+		}
 		if (std::chrono::system_clock::now() - preItemSpawnTime > std::chrono::seconds(ItemSpawnTime)) {
 			preItemSpawnTime = std::chrono::system_clock::now();
 			int obj_id = GetObjID();
@@ -216,9 +253,6 @@ void Network::Update(float elapsedTime) {
 				return;
 			}
 
-			std::random_device rd;
-			std::mt19937 mt{ rd() };
-			std::uniform_int_distribution<int> dist{ 1, 32767 };
 			GameObject* pistol = GameObjects[obj_id];
 			pistol->direction = dist(mt) % 8;
 			pistol->velocity = VELOCITY;
@@ -229,7 +263,7 @@ void Network::Update(float elapsedTime) {
 			pistol->type = ITEM;
 			pistol->isActive = true;
 			pistol->isMove = false;
-			pistol->pos = Coordinate{ short(CUR_WINDOW_START_X + (dist(mt) % CUR_WINDOW_WIDTH)),short(CUR_WINDOW_START_Y + (dist(mt) % CUR_WINDOW_HEIGHT)) };
+			pistol->pos = Coordinate{ short(CUR_WINDOW_START_X + dist(mt) % CUR_WINDOW_WIDTH),short(CUR_WINDOW_START_Y + dist(mt) % CUR_WINDOW_HEIGHT) };
 
 			for (int i = 0; i < MAX_USER; ++i) {
 				Player* p = reinterpret_cast<Player*>(GameObjects[i]);
@@ -248,10 +282,11 @@ void Network::Update(float elapsedTime) {
 		if (playerCount == 1) {
 			for (int i = 0; i < MAX_USER; ++i) {
 				Player* p = reinterpret_cast<Player*>(GameObjects[i]);
-				if (p->hp > 0)
+				if (p->hp > 0) {
 					SendChangeScene(i, (char)SCENE::winner);
-				MyScene = SCENE::lobby;
+				}
 			}
+			MyScene = SCENE::winner;
 		}
 	}
 
