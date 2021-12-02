@@ -30,6 +30,7 @@ const char CS_PACKET_SHOOT_BULLET = 4;
 const char CS_PACKET_USED_ITEM = 5;
 const char CS_PACKET_KEY_DOWN = 6;
 const char CS_PACKET_KEY_UP = 7;
+const char CS_PACKET_REPLAY = 8;
 
 //	패킷 타입(Server->Client)
 const char SC_PACKET_LOGIN_OK = 1;
@@ -62,6 +63,9 @@ struct cs_packet_shoot_bullet : packet {
 };
 struct cs_packet_used_item : packet {
 	char itemNum;
+};
+struct cs_packet_replay : packet {
+	char sceneNum;
 };
 
 //	패킷 정의(Server->Client)
