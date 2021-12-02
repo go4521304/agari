@@ -149,7 +149,8 @@ void Network::SendRemoveObj(int id, int victm) {
 	sendPacket.packetType = SC_PACKET_REMOVE_OBJ;
 	sendPacket.objectID = victm;
 	GameObjects[victm]->collisionCount = 0;
-	GameObjects[victm]->isActive = false;
+	if(false == IsPlayer(victm))
+		GameObjects[victm]->isActive = false;
 
 	reinterpret_cast<Player*>(GameObjects[id])->UpdateBuf(&sendPacket, sendPacket.packetSize);
 }
@@ -201,18 +202,9 @@ void Network::Update(float elapsedTime) {
 				CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
 				CUR_WINDOW_START_X = 15;
 				CUR_WINDOW_START_Y = 15;
-				for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
+				for (int j = WALL_ID_RIGHT+1; j < MAX_OBJECT; ++j) {
 					if (false == GameObjects[j]->isActive) continue;
 					SendRemoveObj(i, j);
-				}
-				for (int j = 8; j < 20; ++j) {
-					GameObjects[j]->isActive = true;
-					GameObjects[j]->pos = Coordinate{ short(BLOCK_WIDTH * rand() % CUR_WINDOW_WIDTH),  short(BLOCK_HEIGHT * rand() % CUR_WINDOW_HEIGHT) };
-					GameObjects[j]->width = BLOCK_WIDTH;
-					GameObjects[j]->height = BLOCK_HEIGHT;
-					GameObjects[j]->sprite = (int)SPRITE::box;
-					GameObjects[j]->type = BOX;
-					GameObjects[j]->id = i;
 				}
 			}
 		}
@@ -220,6 +212,27 @@ void Network::Update(float elapsedTime) {
 	}
 
 	if (MyScene == SCENE::stage1) {
+
+		if (CUR_WINDOW_START_X < 400 && std::chrono::system_clock::now() - preWallMoveTime > std::chrono::milliseconds(WallMoveTime)) {
+			preWallMoveTime = std::chrono::system_clock::now();
+			CUR_WINDOW_START_X += 1;
+			CUR_WINDOW_START_Y += 1;
+			CUR_WINDOW_WIDTH -= 2;
+			CUR_WINDOW_HEIGHT -= 2;
+			GameObjects[WALL_ID_UP]->pos.y += 1;
+			GameObjects[WALL_ID_DOWN]->pos.y -= 1;
+
+			GameObjects[WALL_ID_LEFT]->pos.x += 1;
+			GameObjects[WALL_ID_RIGHT]->pos.x -= 1;
+
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (false == GameObjects[j]->isActive) continue;
+				SendMoveObj(j, WALL_ID_UP);
+				SendMoveObj(j, WALL_ID_DOWN);
+				SendMoveObj(j, WALL_ID_LEFT);
+				SendMoveObj(j, WALL_ID_RIGHT);
+			}
+		}
 		if (std::chrono::system_clock::now() - preItemSpawnTime > std::chrono::seconds(ItemSpawnTime)) {
 			preItemSpawnTime = std::chrono::system_clock::now();
 			int obj_id = GetObjID();

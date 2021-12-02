@@ -18,7 +18,7 @@ const short BLOCK_HEIGHT = 30;
 
 const short WINDOW_WIDTH = 900 * 2;      //윈도우 x사이즈
 const short WINDOW_HEIGHT = 800 * 2;
-const float VELOCITY = 300.0f;
+const float VELOCITY = 500.0f;
 extern short CUR_WINDOW_WIDTH;      //윈도우 x사이즈
 extern short CUR_WINDOW_HEIGHT;
 extern short CUR_WINDOW_START_X;
@@ -35,6 +35,9 @@ class Network
 
 	int ItemSpawnTime;
 	std::chrono::system_clock::time_point preItemSpawnTime;
+
+	int WallMoveTime;
+	std::chrono::system_clock::time_point preWallMoveTime;
 public:
 
 	std::vector<std::thread> threads;
@@ -47,7 +50,10 @@ public:
 	Network() {
 		assert(instance == nullptr);
 		instance = this;
-		ItemSpawnTime = 1;
+		preWallMoveTime = preItemSpawnTime = std::chrono::system_clock::now();
+			
+		ItemSpawnTime = 3;
+		WallMoveTime = 200;
 		for (int i = 0; i < MAX_USER; ++i) {
 			GameObjects.push_back(new Player);
 		}
@@ -58,6 +64,8 @@ public:
 			short objlength = 100;
 			// 위
 			GameObjects[WALL_ID_UP]->isActive = true;
+			GameObjects[WALL_ID_UP]->isMove = true;
+			GameObjects[WALL_ID_UP]->velocity = 0;
 			GameObjects[WALL_ID_UP]->pos = Coordinate{ WINDOW_WIDTH / 2,0 };
 			GameObjects[WALL_ID_UP]->width = WINDOW_WIDTH;
 			GameObjects[WALL_ID_UP]->height = objlength;
@@ -66,6 +74,8 @@ public:
 			GameObjects[WALL_ID_UP]->id = 4;
 			// 아래
 			GameObjects[WALL_ID_DOWN]->isActive = true;
+			GameObjects[WALL_ID_DOWN]->isMove = true;
+			GameObjects[WALL_ID_DOWN]->velocity = 0;
 			GameObjects[WALL_ID_DOWN]->pos = Coordinate{ WINDOW_WIDTH / 2, WINDOW_HEIGHT };
 			GameObjects[WALL_ID_DOWN]->width = WINDOW_WIDTH;
 			GameObjects[WALL_ID_DOWN]->height = objlength;
@@ -74,6 +84,8 @@ public:
 			GameObjects[WALL_ID_DOWN]->id = 5;
 			// 왼쪽
 			GameObjects[WALL_ID_LEFT]->isActive = true;
+			GameObjects[WALL_ID_LEFT]->isMove = true;
+			GameObjects[WALL_ID_LEFT]->velocity = 0;
 			GameObjects[WALL_ID_LEFT]->pos = Coordinate{ 0, WINDOW_HEIGHT / 2 };
 			GameObjects[WALL_ID_LEFT]->width = objlength;
 			GameObjects[WALL_ID_LEFT]->height = WINDOW_HEIGHT;
@@ -82,6 +94,8 @@ public:
 			GameObjects[WALL_ID_LEFT]->id = 6;
 			// 오른쪽
 			GameObjects[WALL_ID_RIGHT]->isActive = true;
+			GameObjects[WALL_ID_RIGHT]->isMove = true;
+			GameObjects[WALL_ID_RIGHT]->velocity = 0;
 			GameObjects[WALL_ID_RIGHT]->pos = Coordinate{ WINDOW_WIDTH, WINDOW_HEIGHT / 2 };
 			GameObjects[WALL_ID_RIGHT]->width = objlength;
 			GameObjects[WALL_ID_RIGHT]->height = WINDOW_HEIGHT;
@@ -89,15 +103,15 @@ public:
 			GameObjects[WALL_ID_RIGHT]->type = WALL;
 			GameObjects[WALL_ID_RIGHT]->id = 7;
 		}
-		for (int i = 8; i < 20; ++i) {
-			GameObjects[i]->isActive = true;
-			GameObjects[i]->pos = Coordinate{ short(BLOCK_WIDTH * rand()% WINDOW_WIDTH),  short(BLOCK_HEIGHT* rand() % WINDOW_HEIGHT) };
-			GameObjects[i]->width = BLOCK_WIDTH;
-			GameObjects[i]->height = BLOCK_HEIGHT;
-			GameObjects[i]->sprite = (int)SPRITE::box;
-			GameObjects[i]->type = BOX;
-			GameObjects[i]->id = i;
-		}
+		//for (int i = 8; i < 20; ++i) {
+		//	GameObjects[i]->isActive = true;
+		//	GameObjects[i]->pos = Coordinate{ short(BLOCK_WIDTH * rand()% WINDOW_WIDTH),  short(BLOCK_HEIGHT* rand() % WINDOW_HEIGHT) };
+		//	GameObjects[i]->width = BLOCK_WIDTH;
+		//	GameObjects[i]->height = BLOCK_HEIGHT;
+		//	GameObjects[i]->sprite = (int)SPRITE::box;
+		//	GameObjects[i]->type = BOX;
+		//	GameObjects[i]->id = i;
+		//}
 		WSADATA wsa;
 		if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 			return;
@@ -150,8 +164,8 @@ public:
 		GameObject* a = GameObjects[a_id];
 		GameObject* b = GameObjects[b_id];
 
-		RECT aRect{ a->pos.x - a->width / 2, a->pos.y - a->height / 2,a->pos.x + a->width / 2,  a->pos.y + a->height };
-		RECT bRect{ b->pos.x - b->width / 2, b->pos.y - b->height / 2,b->pos.x + b->width / 2,  b->pos.y + b->height };
+		RECT aRect{ a->pos.x - a->width / 2, a->pos.y - a->height / 2,a->pos.x + a->width / 2,  a->pos.y + a->height/2 };
+		RECT bRect{ b->pos.x - b->width / 2, b->pos.y - b->height / 2,b->pos.x + b->width / 2,  b->pos.y + b->height/2 };
 
 		RECT tmp;
 		if (IntersectRect(&tmp,&aRect, &bRect))
