@@ -10,5 +10,5 @@
 #include <chrono>
 #include <algorithm>
 #include <assert.h>
-
+#include <atomic>
 #define BUFSIZE		512

@@ -35,7 +35,7 @@ public:
 	char sprite;
 	char type;
 	int collisionCount = 0;
-	bool isMove = false;
+	std::atomic_bool isMove = false;
 	bool isAttack = false;
 	bool isReady = false;
 	bool isActive = false;
