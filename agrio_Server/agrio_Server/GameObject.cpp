@@ -22,13 +22,13 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 			y -= speed;
 			break;
 		case (char)DIR::NE:
-			x += speed;
-			y -= speed;
+			x += speed * 0.7;
+			y -= speed * 0.7;
 			break;
 
 		case (char)DIR::NW:
-			x -= speed;
-			y -= speed;
+			x -= speed * 0.7;
+			y -= speed * 0.7;
 			break;
 
 		case (char)DIR::S:
@@ -37,13 +37,13 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 			break;
 
 		case (char)DIR::SE:
-			x += speed;
-			y += speed;
+			x += speed * 0.7;
+			y += speed * 0.7;
 			break;
 
 		case (char)DIR::SW:
-			x -= speed;
-			y += speed;
+			x -= speed * 0.7;
+			y += speed * 0.7;
 			break;
 
 		case (char)DIR::E:
@@ -88,41 +88,18 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 						GameObject* Object = (net->GameObjects[obj->id]);
 						Object->isActive = false;
 						Object->isMove = false;
-
-						if (reinterpret_cast<Player*>(this)->hp <= 0) {
-							net->SendChangeScene(id, (char)SCENE::gameover);
-							for (int i = 0; i < MAX_USER; ++i) {
-								if (false == Network::GetInstance()->GameObjects[i]->isActive) continue;
-								net->SendChangeHp(i, id);
-								net->SendRemoveObj(i, obj->id);
-								// 체력이 0이 되면
-								CUR_WINDOW_START_X = WINDOW_WIDTH / 4 + 15;
-								CUR_WINDOW_START_Y = WINDOW_HEIGHT / 4 + 15;
-								CUR_WINDOW_WIDTH *= 0.75;
-								CUR_WINDOW_HEIGHT *= 0.75;
-								net->GameObjects[WALL_ID_UP]->pos.y = WINDOW_HEIGHT / 4;
-								net->SendMoveObj(i, WALL_ID_UP);
-								net->GameObjects[WALL_ID_DOWN]->pos.y = WINDOW_HEIGHT / 4 * 3;
-								net->SendMoveObj(i, WALL_ID_DOWN);
-
-								net->GameObjects[WALL_ID_LEFT]->pos.x = WINDOW_WIDTH / 4 * 3;
-								net->SendMoveObj(i, WALL_ID_LEFT);
-								net->GameObjects[WALL_ID_RIGHT]->pos.x = WINDOW_WIDTH / 4;
-								net->SendMoveObj(i, WALL_ID_RIGHT);
-								for (int j = WALL_ID_RIGHT; j < MAX_OBJECT; ++j) {
-									//net->SendRemoveObj(i, j);
-								}
+						for (int i = 0; i < MAX_USER; ++i) {
+							if (false == Network::GetInstance()->GameObjects[i]->isActive) continue;
+							net->SendChangeHp(i, id);
+							net->SendRemoveObj(i, obj->id);
+							// 체력이 0이 되면
+							if (reinterpret_cast<Player*>(this)->hp <= 0) {
 								net->SendRemoveObj(i, id);
+								net->SendChangeScene(id, (char)SCENE::gameover);
+								std::cout << "\n[" << (int)obj->id << "] hit BULLET -> Gameover\n";
 							}
+
 						}
-						else {
-							for (int i = 0; i < MAX_USER; ++i) {
-								if (false == Network::GetInstance()->GameObjects[i]->isActive) continue;
-								net->SendChangeHp(i, id);
-								net->SendRemoveObj(i, obj->id);
-							}
-						}
-						
 					}
 					break;
 					case ITEM:
@@ -153,45 +130,46 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 				else {// 플레이어가 아닌(총알, 아이템, 벽)오브젝트가 충돌했을 때 충돌타입이(obj->type)이라면
 					switch (type) {
 					case BOX:
+						break;
 					case WALL:
+						switch (id)
+						{
+						case WALL_ID_UP:
+							obj->pos.y += 1;
+							break;
+						case WALL_ID_DOWN:
+							obj->pos.y -= 1;
+							break;
+						case WALL_ID_LEFT:
+							obj->pos.x += 1;
+							break;
+						case WALL_ID_RIGHT:
+							obj->pos.x -= 1;
+							break;
+						default:
+							break;
+						}
+						for (int i = 0; i < MAX_USER; ++i) {
+							if (false == net->GameObjects[i]->isActive) continue;
+							net->SendMoveObj(i, obj->id);
+						}
 						break;
 					case BULLET:
 						if (obj->type == PLAYER) {
 							reinterpret_cast<Player*>(net->GameObjects[obj->id])->ChangeHp(ATTACKHP);
-							
+
 							GameObject* Object = (net->GameObjects[id]);
 							Object->isActive = false;
 							Object->isMove = false;
-
-							if (reinterpret_cast<Player*>(net->GameObjects[obj->id])->hp <= 0) {
-								net->SendChangeScene(obj->id, (char)SCENE::gameover);
-								for (int i = 0; i < MAX_USER; ++i) {
-									if (false == net->GameObjects[i]->isActive) continue;
-									net->SendChangeHp(i, obj->id);
-									net->SendRemoveObj(i, id);
-									CUR_WINDOW_START_X = WINDOW_WIDTH / 4 + 15;
-									CUR_WINDOW_START_Y = WINDOW_HEIGHT / 4 + 15;
-									CUR_WINDOW_WIDTH *= 0.75;
-									CUR_WINDOW_HEIGHT *= 0.75;
-									net->GameObjects[WALL_ID_UP]->pos.y = WINDOW_HEIGHT / 4;
-									net->SendMoveObj(i, WALL_ID_UP);
-									net->GameObjects[WALL_ID_DOWN]->pos.y = WINDOW_HEIGHT / 4 * 3;
-									net->SendMoveObj(i, WALL_ID_DOWN);
-
-									net->GameObjects[WALL_ID_LEFT]->pos.x = WINDOW_WIDTH / 4 * 3;
-									net->SendMoveObj(i, WALL_ID_LEFT);
-									net->GameObjects[WALL_ID_RIGHT]->pos.x = WINDOW_WIDTH / 4;
-									net->SendMoveObj(i, WALL_ID_RIGHT);
+							for (int i = 0; i < MAX_USER; ++i) {
+								if (false == net->GameObjects[i]->isActive) continue;
+								net->SendChangeHp(i, obj->id);
+								net->SendRemoveObj(i, id);
+								// 체력이 0이 되면
+								if (reinterpret_cast<Player*>(net->GameObjects[obj->id])->hp <= 0) {
+									net->SendChangeScene(obj->id, (char)SCENE::gameover);
 									net->SendRemoveObj(i, obj->id);
-								}
-							}
-
-							else {
-								for (int i = 0; i < MAX_USER; ++i) {
-									if (false == net->GameObjects[i]->isActive) continue;
-									net->SendChangeHp(i, obj->id);
-									net->SendRemoveObj(i, id);
-									// 체력이 0이 되면
+									std::cout << "\nBULLET hit [" << (int)obj->id << "] -> Gameover\n";
 								}
 							}
 						}
@@ -253,13 +231,13 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 							}
 							else
 							{
- 								obj->collisionCount++;
+								obj->collisionCount++;
 
 							}
 						}
 						break;
 					}
-					
+
 				}
 			}
 		}
@@ -348,9 +326,9 @@ void SetBox(int obj_id, char direction, Coordinate pos) {
 	if (direction == -1) direction = 7;
 	GameObject* pistol = Network::GetInstance()->GameObjects[obj_id];
 	pistol->direction = direction;
-	pistol->velocity = VELOCITY;
+	pistol->velocity = 0;
 	pistol->width = BLOCK_WIDTH;
-	pistol->height = BLOCK_HEIGHT;
+	pistol->height = BLOCK_HEIGHT + 50;
 	pistol->id = obj_id;
 	pistol->sprite = (char)SPRITE::box;
 	pistol->type = BOX;
@@ -402,12 +380,12 @@ bool Player::Recv() {
 		}
 
 		/*
-		* 새로 접속한 클라이언트에게 현재 그려야할 플레이어를 알려줌
+		* 새로 접속한 클라이언트에게 현재 그려야할 오브젝트를 알려줌
 		*/
-		for (const auto Client : net->GameObjects) {
-			if (false == Client->isActive) continue;
-			if (id == Client->GetId()) continue;
-			net->SendPutObj(id, Client->GetId());
+		for (const auto obj : net->GameObjects) {
+			if (false == obj->isActive) continue;
+			if (id == obj->GetId()) continue;
+			net->SendPutObj(id, obj->GetId());
 		}
 
 	}
@@ -464,7 +442,7 @@ bool Player::Recv() {
 	{
 		cs_packet_shoot_bullet recvPacket;
 		retval = recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-		if (items[curEquip-1] <= 0) break;
+		if (items[curEquip - 1] <= 0) break;
 		//nMagazine++;
 		items[curEquip - 1]--;
 
@@ -475,7 +453,7 @@ bool Player::Recv() {
 					std::cout << "모든 오브젝트를 사용하였습니다." << std::endl;
 					break;
 				}
-				SetPistol(obj_id, (net->GameObjects[recvPacket.playerID]->direction+i)%8, net->GameObjects[recvPacket.playerID]->pos);
+				SetPistol(obj_id, (net->GameObjects[recvPacket.playerID]->direction + i) % 8, net->GameObjects[recvPacket.playerID]->pos);
 				for (int i = 0; i < MAX_USER; ++i) {
 					Player* player = reinterpret_cast<Player*>(net->GameObjects[i]);
 					if (false == player->isActive) continue;
@@ -498,11 +476,11 @@ bool Player::Recv() {
 				net->SendPutObj(i, obj_id);
 			}
 		}
-		
+
 		/*
 		* 각 클라이언트들한테 플레이어가 총을 발사 해당 플레이어 오브젝트를 Render 하라고함
 		*/
-		
+
 
 	}
 	break;
@@ -524,7 +502,7 @@ bool Player::Recv() {
 
 		case (char)ITEM::potion:
 		{
-			if (items[potion-1] <= 0) break;
+			if (items[potion - 1] <= 0) break;
 			ChangeHp(HEALING);
 			/*
 			* 각 클라이언트들한테 플레이어가 포션을 사용하였으므로 해당 플레이어의 체력을 Chage 하라고함
@@ -538,7 +516,7 @@ bool Player::Recv() {
 		break;
 		case (char)ITEM::box:
 		{
-			if (items[box -1 ] <= 0) break;
+			if (items[box - 1] <= 0) break;
 			int obj_id = net->GetObjID();
 			if (obj_id == -1) {
 				std::cout << "모든 오브젝트를 사용하였습니다." << std::endl;
