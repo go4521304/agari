@@ -46,6 +46,7 @@ public:
 	SOCKET listen_sock;
 	static Network* GetInstance();
 	SCENE MyScene = SCENE::lobby;
+	int ReplayCount = 0;
 
 	Network() {
 		assert(instance == nullptr);
@@ -181,6 +182,7 @@ public:
 	void SendChangeHp(int id, int target);
 	void SendChangeScene(int id, char snum);
 	void SendRemoveObj(int id, int victm);
+	void SendRemoveObj_2(int id, int victm);
 	void SendGetItem(int id, int victm);
 	void SendChangeWeapon(int id, int target);
 	void Update(float elapsedTime);

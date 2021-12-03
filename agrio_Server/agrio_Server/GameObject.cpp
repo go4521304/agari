@@ -154,12 +154,13 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 						}
 						break;
 					case BULLET:
-						if (obj->type == PLAYER) {
+						if (obj->type == PLAYER && reinterpret_cast<Player*>(net->GameObjects[obj->id])->hp > 0) {
 							reinterpret_cast<Player*>(net->GameObjects[obj->id])->ChangeHp(ATTACKHP);
 
 							GameObject* Object = (net->GameObjects[id]);
 							Object->isActive = false;
 							Object->isMove = false;
+							
 							for (int i = 0; i < MAX_USER; ++i) {
 								if (false == net->GameObjects[i]->isActive) continue;
 								net->SendChangeHp(i, obj->id);
@@ -392,7 +393,6 @@ bool Player::Recv() {
 	{
 		cs_packet_player_move recvPacket;
 		retval = recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-
 		/*
 		* 각 클라이언트들한테 플레이어가 이동했으니 해당 플레이어 오브젝트를 이동 하라고함
 		*/
@@ -448,6 +448,7 @@ bool Player::Recv() {
 			for (int i = -1; i < 2; ++i) {
 				int obj_id = net->GetObjID();
 				if (obj_id == -1) {
+					
 					std::cout << "모든 오브젝트를 사용하였습니다." << std::endl;
 					break;
 				}
@@ -536,14 +537,14 @@ bool Player::Recv() {
 	break;
 	case CS_PACKET_REPLAY:
 	{
-		net->MyScene = SCENE::stage1;
-		CUR_WINDOW_WIDTH = WINDOW_WIDTH * 0.75f;
-		CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
-		CUR_WINDOW_START_X = 15;
-		CUR_WINDOW_START_Y = 15;
-		for (int j = WALL_ID_RIGHT + 1; j < MAX_OBJECT; ++j) {
-			if (false == net->GameObjects[j]->isActive) continue;
-			net->SendRemoveObj(id, j);
+		cs_packet_shoot_bullet recvPacket;
+		retval = recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
+		// 지금 이 플레이어는 한판을 마치고 re를 눌렀다.
+		// 이때 isReady는 아직 true 상태이다 이걸 스위치로 사용한다.
+		if (isReady) {
+			net->ReplayCount++;
+			isReady = false; // 패킷이 여러번 올때 count를 늘리지 않기 위함
+			std::cout << "notice! : " << net->ReplayCount << " \n";
 		}
 	}
 	break;

@@ -77,10 +77,10 @@ void GameLoop(HWND hWnd)
 		}
 	}
 
-	else if (scene == SCENE::gameover)
+	/*else if (scene == SCENE::gameover||scene == SCENE::winner)
 	{
 
-	}
+	}*/
 
 	// lobby, stage1, stage2 등등등...
 	else
@@ -128,7 +128,6 @@ void GameLoop(HWND hWnd)
 				sendPacket.packetType = CS_PACKET_PLAYER_MOVE;
 				sendPacket.dir = (char)p->GetDir();
 				Send(&sendPacket);
-
 				if (p->GetState() != STATE::move)
 					SendStatePacket(STATE::move);
 			}
@@ -618,7 +617,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			if (play_button == true)
 			{
-				ConnectServer();
+				if (isAlreadyConnect == false)
+					ConnectServer();
+				//else { // 초기화 확인용
+				//	for (int j = 7 + 1; j < 100; ++j) {
+				//		if (false == gameObject[j]->GetActive()) {
+				//			std::cout << j << " : " << gameObject[j]->GetActive() << std::endl;
+				//			continue;
+				//		}
+				//	}
+				//}
 				while (!isLoginOk);
 				scene = SCENE::lobby;
 				play_button = false;
@@ -645,6 +653,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			else if (exit2_button == true)
 			{
+				cs_packet_replay sendPacket;
+				sendPacket.packetSize = sizeof(sendPacket);
+				sendPacket.packetType = CS_PACKET_REPLAY;
+				sendPacket.sceneNum = (char)scene;
+				Send(&sendPacket);
 				exit_button = false;
 				PostQuitMessage(0);          //프로그램 종료
 				break;
@@ -758,7 +771,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		}
 
-		else if (scene == SCENE::gameover)
+		else if (scene == SCENE::gameover || scene == SCENE::winner)
 		{
 
 		}
@@ -858,6 +871,8 @@ void ConnectServer()
 	packet.packetType = CS_PACKET_LOGIN;
 	packet.playerSkin = (char)selPlayer;
 	Send(&packet);
+
+	isAlreadyConnect = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -910,7 +925,7 @@ void Recv(SOCKET sock) {
 	{
 		sc_packet_move_obj recvPacket;
 		retval += recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-	
+		
 		gameObject[(int)recvPacket.objectID]->ObjMove(&recvPacket);
 	}
 	break;

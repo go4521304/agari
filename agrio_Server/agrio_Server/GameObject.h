@@ -54,7 +54,7 @@ public:
 	int hp = 50; // 힐량 확인을 위해 억지로 50으로 설정
 	short items[5];
 	SOCKET sock;
-
+	
 	char eventPacketBuf[BUFSIZE];
 	int bufSize = 0;
 	std::mutex buf_lock;
@@ -62,6 +62,7 @@ public:
 	Player() {
 		for (auto& item : items)
 			item = 0;
+		items[1] = 30; // 임시
 	};
 
 	~Player() {

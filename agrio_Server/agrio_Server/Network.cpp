@@ -149,8 +149,17 @@ void Network::SendRemoveObj(int id, int victm) {
 	sendPacket.packetType = SC_PACKET_REMOVE_OBJ;
 	sendPacket.objectID = victm;
 	GameObjects[victm]->collisionCount = 0;
-	if(false == IsPlayer(victm))
+	if (false == IsPlayer(victm))
 		GameObjects[victm]->isActive = false;
+
+	reinterpret_cast<Player*>(GameObjects[id])->UpdateBuf(&sendPacket, sendPacket.packetSize);
+}
+void Network::SendRemoveObj_2(int id, int victm) {
+	sc_packet_remove_obj sendPacket;
+	sendPacket.packetSize = sizeof(sendPacket);
+	sendPacket.packetType = SC_PACKET_REMOVE_OBJ;
+	sendPacket.objectID = victm;
+	GameObjects[victm]->collisionCount = 0;
 
 	reinterpret_cast<Player*>(GameObjects[id])->UpdateBuf(&sendPacket, sendPacket.packetSize);
 }
@@ -206,11 +215,9 @@ void Network::Update(float elapsedTime) {
 					if (false == GameObjects[j]->isActive) continue;
 					SendRemoveObj(i, j);
 				}
-				GameObjects[i]->isReady = false;
 			}
 		}
 		ready_count = 0;
-
 	}
 
 	if (MyScene == SCENE::stage1) {
@@ -276,10 +283,111 @@ void Network::Update(float elapsedTime) {
 				if (p->hp > 0)
 					SendChangeScene(i, (char)SCENE::winner);
 			}
-			MyScene = SCENE::lobby;
+			MyScene = SCENE::winner;
 		}
 	}
 
+	if (MyScene == SCENE::winner) { 
+		// replaycnt가 MAX_USER가 되도록 기다린다. 
+		// 만약 이때 먼저 죽은 player가 들어가려 한다면 winner씬엔 login을 거부하는 방향으로 
+		if (ReplayCount == MAX_USER) {
+
+			std::cout << "'ReplayCount == MAX_USER" << std::endl;
+
+			// 캐릭터 초기화
+			for (int i = 0; i < MAX_USER; ++i) {
+				(GameObjects[i])->isActive = true;	
+				(GameObjects[i])->isAttack = false;										
+				(GameObjects[i])->velocity = PLAYER_SPEED;
+				(GameObjects[i])->pos.x = (short)800;
+				(GameObjects[i])->pos.y = (short)900;
+				(GameObjects[i])->direction = (char)DIR::N;
+
+				reinterpret_cast<Player*>(GameObjects[i])->hp = 50;						// 체력
+				reinterpret_cast<Player*>(GameObjects[i])->state = STATE::idle;
+				reinterpret_cast<Player*>(GameObjects[i])->curEquip = ITEM::empty;
+				
+				for (int j = 0; j < 5; ++j) {	// 아이템
+					reinterpret_cast<Player*>(GameObjects[i])->items[j] = 0;
+					SendGetItem(i, j);
+				}
+				for (int j = 0; j < MAX_USER; ++j) { // 플레이어들에게 알림
+					SendPutObj(j, i);
+					SendChangeHp(j, i);
+					SendChangeState(j, i);
+					SendChangeWeapon(j, i);
+					SendMoveObj(j, i);
+				}
+			}
+
+			// 윈도우 크기 초기화
+			CUR_WINDOW_WIDTH = WINDOW_WIDTH * 0.75f;
+			CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
+			CUR_WINDOW_START_X = 15;
+			CUR_WINDOW_START_Y = 15;
+
+			//  각 플레이어들에게 쓴 오브젝트 삭제 패킷전송
+			for (int i = 0; i < MAX_USER; ++i) {
+				for (int j = WALL_ID_RIGHT + 1; j < MAX_OBJECT; ++j) {
+					if (false == GameObjects[j]->isActive) continue;
+					SendRemoveObj_2(i, j);
+				}
+			}
+
+			// 서버에서 오브젝트를 삭제
+			for (int j = WALL_ID_RIGHT + 1; j < MAX_OBJECT; ++j) {
+				GameObjects[j]->isActive = false;
+			}
+
+			// 벽초기화
+			{
+				short objlength = 100;
+				// 위
+				GameObjects[WALL_ID_UP]->isActive = true;
+				GameObjects[WALL_ID_UP]->isMove = true;
+				GameObjects[WALL_ID_UP]->velocity = 0;
+				GameObjects[WALL_ID_UP]->pos = Coordinate{ WINDOW_WIDTH / 2,0 };
+				GameObjects[WALL_ID_UP]->width = WINDOW_WIDTH;
+				GameObjects[WALL_ID_UP]->height = objlength;
+				GameObjects[WALL_ID_UP]->sprite = (int)SPRITE::wallRow;
+				GameObjects[WALL_ID_UP]->type = WALL;
+				GameObjects[WALL_ID_UP]->id = 4;
+				// 아래
+				GameObjects[WALL_ID_DOWN]->isActive = true;
+				GameObjects[WALL_ID_DOWN]->isMove = true;
+				GameObjects[WALL_ID_DOWN]->velocity = 0;
+				GameObjects[WALL_ID_DOWN]->pos = Coordinate{ WINDOW_WIDTH / 2, WINDOW_HEIGHT };
+				GameObjects[WALL_ID_DOWN]->width = WINDOW_WIDTH;
+				GameObjects[WALL_ID_DOWN]->height = objlength;
+				GameObjects[WALL_ID_DOWN]->sprite = (int)SPRITE::wallRow;
+				GameObjects[WALL_ID_DOWN]->type = WALL;
+				GameObjects[WALL_ID_DOWN]->id = 5;
+				// 왼쪽
+				GameObjects[WALL_ID_LEFT]->isActive = true;
+				GameObjects[WALL_ID_LEFT]->isMove = true;
+				GameObjects[WALL_ID_LEFT]->velocity = 0;
+				GameObjects[WALL_ID_LEFT]->pos = Coordinate{ 0, WINDOW_HEIGHT / 2 };
+				GameObjects[WALL_ID_LEFT]->width = objlength;
+				GameObjects[WALL_ID_LEFT]->height = WINDOW_HEIGHT;
+				GameObjects[WALL_ID_LEFT]->sprite = (int)SPRITE::wallCol;
+				GameObjects[WALL_ID_LEFT]->type = WALL;
+				GameObjects[WALL_ID_LEFT]->id = 6;
+				// 오른쪽
+				GameObjects[WALL_ID_RIGHT]->isActive = true;
+				GameObjects[WALL_ID_RIGHT]->isMove = true;
+				GameObjects[WALL_ID_RIGHT]->velocity = 0;
+				GameObjects[WALL_ID_RIGHT]->pos = Coordinate{ WINDOW_WIDTH, WINDOW_HEIGHT / 2 };
+				GameObjects[WALL_ID_RIGHT]->width = objlength;
+				GameObjects[WALL_ID_RIGHT]->height = WINDOW_HEIGHT;
+				GameObjects[WALL_ID_RIGHT]->sprite = (int)SPRITE::wallCol;
+				GameObjects[WALL_ID_RIGHT]->type = WALL;
+				GameObjects[WALL_ID_RIGHT]->id = 7;
+			}
+
+			MyScene = SCENE::lobby;
+			ReplayCount = 0;
+		}
+	}
 	//플레이어의 이벤트 버퍼에 있는 내용을 전송버퍼로 옮김
 	for (int i = 0; i < MAX_USER; ++i) {
 		Player* p = reinterpret_cast<Player*>(GameObjects[i]);

@@ -80,6 +80,8 @@ const int win_y_size = 800;      //윈도우 y사이즈
 bool isLoginOk = false;			// 로그인ok가 올때까지 대기
 const int max_hp = 100;			// 플레이어의 최대 체력
 
+bool isAlreadyConnect = false;
+
 // 키 액션
 struct KEY_ACTION
 {

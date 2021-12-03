@@ -26,6 +26,7 @@ public:
 	Coordinate GetPos() { return pos; }
 	DIR GetDir() { return direction; }
 	void SetDir(DIR newDir) { direction = newDir; }
+	bool GetActive() { return isActive; }
 
 	void LoginOk(void* pk);
 	void ObjMove(void* pk);
