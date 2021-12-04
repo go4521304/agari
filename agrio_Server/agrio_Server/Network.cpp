@@ -207,6 +207,10 @@ void Network::Update(float elapsedTime) {
 			for (int i = 0; i < MAX_USER; ++i) {
 				SendChangeScene(i, (char)SCENE::stage1);
 				MyScene = SCENE::stage1;
+				GameObjects[WALL_ID_UP]->isMove = true;
+				GameObjects[WALL_ID_DOWN]->isMove = true;
+				GameObjects[WALL_ID_LEFT]->isMove = true;
+				GameObjects[WALL_ID_RIGHT]->isMove = true;
 				CUR_WINDOW_WIDTH = WINDOW_WIDTH * 0.75f;
 				CUR_WINDOW_HEIGHT = WINDOW_HEIGHT * 0.75f;
 				CUR_WINDOW_START_X = 15;
@@ -220,7 +224,7 @@ void Network::Update(float elapsedTime) {
 		ready_count = 0;
 	}
 
-	if (MyScene == SCENE::stage1) {
+	else if (MyScene == SCENE::stage1) {
 
 		if (CUR_WINDOW_START_X < 400 && std::chrono::system_clock::now() - preWallMoveTime > std::chrono::milliseconds(WallMoveTime)) {
 			preWallMoveTime = std::chrono::system_clock::now();
@@ -287,7 +291,7 @@ void Network::Update(float elapsedTime) {
 		}
 	}
 
-	if (MyScene == SCENE::winner) { 
+	else if (MyScene == SCENE::winner) { 
 		// replaycnt가 MAX_USER가 되도록 기다린다. 
 		// 만약 이때 먼저 죽은 player가 들어가려 한다면 winner씬엔 login을 거부하는 방향으로 
 		if (ReplayCount == MAX_USER) {
@@ -344,7 +348,7 @@ void Network::Update(float elapsedTime) {
 				short objlength = 100;
 				// 위
 				GameObjects[WALL_ID_UP]->isActive = true;
-				GameObjects[WALL_ID_UP]->isMove = true;
+				GameObjects[WALL_ID_UP]->isMove = false;
 				GameObjects[WALL_ID_UP]->velocity = 0;
 				GameObjects[WALL_ID_UP]->pos = Coordinate{ WINDOW_WIDTH / 2,0 };
 				GameObjects[WALL_ID_UP]->width = WINDOW_WIDTH;
@@ -354,7 +358,7 @@ void Network::Update(float elapsedTime) {
 				GameObjects[WALL_ID_UP]->id = 4;
 				// 아래
 				GameObjects[WALL_ID_DOWN]->isActive = true;
-				GameObjects[WALL_ID_DOWN]->isMove = true;
+				GameObjects[WALL_ID_DOWN]->isMove = false;
 				GameObjects[WALL_ID_DOWN]->velocity = 0;
 				GameObjects[WALL_ID_DOWN]->pos = Coordinate{ WINDOW_WIDTH / 2, WINDOW_HEIGHT };
 				GameObjects[WALL_ID_DOWN]->width = WINDOW_WIDTH;
@@ -364,7 +368,7 @@ void Network::Update(float elapsedTime) {
 				GameObjects[WALL_ID_DOWN]->id = 5;
 				// 왼쪽
 				GameObjects[WALL_ID_LEFT]->isActive = true;
-				GameObjects[WALL_ID_LEFT]->isMove = true;
+				GameObjects[WALL_ID_LEFT]->isMove = false;
 				GameObjects[WALL_ID_LEFT]->velocity = 0;
 				GameObjects[WALL_ID_LEFT]->pos = Coordinate{ 0, WINDOW_HEIGHT / 2 };
 				GameObjects[WALL_ID_LEFT]->width = objlength;
@@ -374,7 +378,7 @@ void Network::Update(float elapsedTime) {
 				GameObjects[WALL_ID_LEFT]->id = 6;
 				// 오른쪽
 				GameObjects[WALL_ID_RIGHT]->isActive = true;
-				GameObjects[WALL_ID_RIGHT]->isMove = true;
+				GameObjects[WALL_ID_RIGHT]->isMove = false;
 				GameObjects[WALL_ID_RIGHT]->velocity = 0;
 				GameObjects[WALL_ID_RIGHT]->pos = Coordinate{ WINDOW_WIDTH, WINDOW_HEIGHT / 2 };
 				GameObjects[WALL_ID_RIGHT]->width = objlength;

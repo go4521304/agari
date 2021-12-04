@@ -65,7 +65,7 @@ public:
 			short objlength = 100;
 			// 위
 			GameObjects[WALL_ID_UP]->isActive = true;
-			GameObjects[WALL_ID_UP]->isMove = true;
+			GameObjects[WALL_ID_UP]->isMove = false;
 			GameObjects[WALL_ID_UP]->velocity = 0;
 			GameObjects[WALL_ID_UP]->pos = Coordinate{ WINDOW_WIDTH / 2,0 };
 			GameObjects[WALL_ID_UP]->width = WINDOW_WIDTH;
@@ -75,7 +75,7 @@ public:
 			GameObjects[WALL_ID_UP]->id = 4;
 			// 아래
 			GameObjects[WALL_ID_DOWN]->isActive = true;
-			GameObjects[WALL_ID_DOWN]->isMove = true;
+			GameObjects[WALL_ID_DOWN]->isMove = false;
 			GameObjects[WALL_ID_DOWN]->velocity = 0;
 			GameObjects[WALL_ID_DOWN]->pos = Coordinate{ WINDOW_WIDTH / 2, WINDOW_HEIGHT };
 			GameObjects[WALL_ID_DOWN]->width = WINDOW_WIDTH;
@@ -85,7 +85,7 @@ public:
 			GameObjects[WALL_ID_DOWN]->id = 5;
 			// 왼쪽
 			GameObjects[WALL_ID_LEFT]->isActive = true;
-			GameObjects[WALL_ID_LEFT]->isMove = true;
+			GameObjects[WALL_ID_LEFT]->isMove = false;
 			GameObjects[WALL_ID_LEFT]->velocity = 0;
 			GameObjects[WALL_ID_LEFT]->pos = Coordinate{ 0, WINDOW_HEIGHT / 2 };
 			GameObjects[WALL_ID_LEFT]->width = objlength;
@@ -95,7 +95,7 @@ public:
 			GameObjects[WALL_ID_LEFT]->id = 6;
 			// 오른쪽
 			GameObjects[WALL_ID_RIGHT]->isActive = true;
-			GameObjects[WALL_ID_RIGHT]->isMove = true;
+			GameObjects[WALL_ID_RIGHT]->isMove = false;
 			GameObjects[WALL_ID_RIGHT]->velocity = 0;
 			GameObjects[WALL_ID_RIGHT]->pos = Coordinate{ WINDOW_WIDTH, WINDOW_HEIGHT / 2 };
 			GameObjects[WALL_ID_RIGHT]->width = objlength;
