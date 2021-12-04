@@ -43,7 +43,6 @@ private:
 	int curGun;
 	STATE state;
 	short hp;
-
 public:
 	int animFrame;
 	int animTimer;
@@ -53,7 +52,8 @@ public:
 
 	STATE GetState() { return state; }
 	short GetHp() { return hp; }
-	void SetState(STATE newState) { state = newState; }
+
+	int GetcurGun() { return curGun; }
 	void SetWeapon(int newWeapon) { curGun = newWeapon; }
 
 	void PlayerState(void* pk);
@@ -175,7 +175,7 @@ void Player::Render(HDC& hdc)
 			sprites[sprite + 1].Draw(hdc, pos.x - ((width + 6) / 2), pos.y - ((height + 2) / 2), width + 12, height + 2,
 				char_atk_sprite_rect[(int)direction][animFrame].left, char_atk_sprite_rect[(int)direction][animFrame].top, 30, 32);
 
-			if (curGun != empty)
+			if (curGun != empty && curGun != potion && curGun != box)
 				sprites[(int)SPRITE::pistol - pistol + curGun].Draw(hdc, pos.x - ((width + 26) / 2), pos.y - ((height + 22) / 2), width + 32, height + 22,
 					char_weapon_sprite_rect[(int)direction][animFrame].left, char_weapon_sprite_rect[(int)direction][animFrame].top, 50, 52);
 

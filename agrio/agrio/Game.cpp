@@ -77,10 +77,10 @@ void GameLoop(HWND hWnd)
 		}
 	}
 
-	/*else if (scene == SCENE::gameover||scene == SCENE::winner)
+	else if (scene == SCENE::gameover || scene == SCENE::winner)
 	{
 
-	}*/
+	}
 
 	// lobby, stage1, stage2 등등등...
 	else
@@ -128,6 +128,7 @@ void GameLoop(HWND hWnd)
 				sendPacket.packetType = CS_PACKET_PLAYER_MOVE;
 				sendPacket.dir = (char)p->GetDir();
 				Send(&sendPacket);
+				std::cout << "move!" << std::endl;
 				if (p->GetState() != STATE::move)
 					SendStatePacket(STATE::move);
 			}
@@ -144,8 +145,6 @@ void GameLoop(HWND hWnd)
 
 		if (keyAction.space)
 		{
-			//itemTimer -= GetTickCount64() - TIMER;
-
 			if (itemTimer < 0)
 			{
 				if (selectedWeapon == pistol || selectedWeapon == uzi || selectedWeapon == shotgun)
@@ -155,6 +154,7 @@ void GameLoop(HWND hWnd)
 					sendPacket.packetType = CS_PACKET_SHOOT_BULLET;
 					sendPacket.playerID = playerID;
 					Send(&sendPacket);
+					std::cout << "Use!" << std::endl;
 
 					p->UseItem(selectedWeapon - 1);	// 플레이어가 가지고 있는 개수 수정
 					itemTimer = ITEM_TIME[selectedWeapon - 1];	// 선택한 무기의 발사 시간으로
@@ -299,13 +299,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 
 		/*********************************************이미지 로드*****************************************************/
-		gameObject.reserve(100);
+		gameObject.reserve(MAX_OBJECT);
 		for (int i = 0; i < 3; ++i)
 		{
 			Player* player = new Player;
 			gameObject.push_back(player);
 		}
-		for (int i = 3; i < 100; ++i)
+		for (int i = 3; i < MAX_OBJECT; ++i)
 		{
 			GameObject* obj = new GameObject;
 			gameObject.push_back(obj);
@@ -619,14 +619,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				if (isAlreadyConnect == false)
 					ConnectServer();
-				//else { // 초기화 확인용
-				//	for (int j = 7 + 1; j < 100; ++j) {
-				//		if (false == gameObject[j]->GetActive()) {
-				//			std::cout << j << " : " << gameObject[j]->GetActive() << std::endl;
-				//			continue;
-				//		}
-				//	}
-				//}
+				else { // 초기화
+					Player* p = reinterpret_cast<Player*>(gameObject[playerID]);
+					p->animFrame = 2;
+					p->animTimer = 0;
+					for (int i = 0; i < 8; ++i)
+						p->items[i] = 0;
+
+					keyAction.space = false;
+					keyAction.up = false;
+					keyAction.down = false;
+					keyAction.left = false;
+					keyAction.right = false;
+					keyAction.reqSend = false;
+
+					cs_packet_login packet;
+					packet.packetSize = sizeof(cs_packet_login);
+					packet.packetType = CS_PACKET_LOGIN;
+					packet.playerSkin = (char)selPlayer;
+					Send(&packet);
+				}
 				while (!isLoginOk);
 				scene = SCENE::lobby;
 				play_button = false;
@@ -643,21 +655,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (replay_button == true)
 			{
 				scene = SCENE::title;
-				replay_button = false;
-
-				cs_packet_replay sendPacket;
-				sendPacket.packetSize = sizeof(sendPacket);
-				sendPacket.packetType = CS_PACKET_REPLAY;
-				sendPacket.sceneNum = (char)scene;
-				Send(&sendPacket);
+				isLoginOk = false;
 			}
 			else if (exit2_button == true)
 			{
-				cs_packet_replay sendPacket;
-				sendPacket.packetSize = sizeof(sendPacket);
-				sendPacket.packetType = CS_PACKET_REPLAY;
-				sendPacket.sceneNum = (char)scene;
-				Send(&sendPacket);
 				exit_button = false;
 				PostQuitMessage(0);          //프로그램 종료
 				break;
@@ -778,7 +779,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		else
 		{
-			Player* p = reinterpret_cast<Player*>(gameObject[playerID]);;
+			Player* p = reinterpret_cast<Player*>(gameObject[playerID]);
 			switch (wParam)
 			{
 			case VK_ESCAPE:
@@ -925,7 +926,7 @@ void Recv(SOCKET sock) {
 	{
 		sc_packet_move_obj recvPacket;
 		retval += recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-		
+
 		gameObject[(int)recvPacket.objectID]->ObjMove(&recvPacket);
 	}
 	break;
@@ -989,6 +990,11 @@ void Recv(SOCKET sock) {
 		Player* player = reinterpret_cast<Player*>(gameObject[(int)recvPacket.playerID]);
 
 		player->ChangeWeapon(&recvPacket);
+
+		if ((int)recvPacket.playerID == playerID)
+		{
+			selectedWeapon = player->GetcurGun();
+		}
 	}
 	break;
 	default:
