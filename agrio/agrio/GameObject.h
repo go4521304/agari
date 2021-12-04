@@ -40,12 +40,10 @@ public:
 /******************************************** Player ********************************************/
 class Player : public GameObject {
 private:
-	
-
-public:
 	int curGun;
 	STATE state;
 	short hp;
+public:
 	int animFrame;
 	int animTimer;
 	short items[8];

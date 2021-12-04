@@ -350,7 +350,7 @@ void Network::Update(float elapsedTime) {
 			GameObjects[WALL_ID_UP]->height = objlength;
 			GameObjects[WALL_ID_UP]->sprite = (int)SPRITE::wallRow;
 			GameObjects[WALL_ID_UP]->type = WALL;
-			GameObjects[WALL_ID_UP]->id = 4;
+			GameObjects[WALL_ID_UP]->id = 3;
 			// 아래
 			GameObjects[WALL_ID_DOWN]->isActive = true;
 			GameObjects[WALL_ID_DOWN]->isMove = false;
@@ -360,7 +360,7 @@ void Network::Update(float elapsedTime) {
 			GameObjects[WALL_ID_DOWN]->height = objlength;
 			GameObjects[WALL_ID_DOWN]->sprite = (int)SPRITE::wallRow;
 			GameObjects[WALL_ID_DOWN]->type = WALL;
-			GameObjects[WALL_ID_DOWN]->id = 5;
+			GameObjects[WALL_ID_DOWN]->id = 4;
 			// 왼쪽
 			GameObjects[WALL_ID_LEFT]->isActive = true;
 			GameObjects[WALL_ID_LEFT]->isMove = false;
@@ -370,7 +370,7 @@ void Network::Update(float elapsedTime) {
 			GameObjects[WALL_ID_LEFT]->height = WINDOW_HEIGHT;
 			GameObjects[WALL_ID_LEFT]->sprite = (int)SPRITE::wallCol;
 			GameObjects[WALL_ID_LEFT]->type = WALL;
-			GameObjects[WALL_ID_LEFT]->id = 6;
+			GameObjects[WALL_ID_LEFT]->id = 5;
 			// 오른쪽
 			GameObjects[WALL_ID_RIGHT]->isActive = true;
 			GameObjects[WALL_ID_RIGHT]->isMove = false;
@@ -380,7 +380,7 @@ void Network::Update(float elapsedTime) {
 			GameObjects[WALL_ID_RIGHT]->height = WINDOW_HEIGHT;
 			GameObjects[WALL_ID_RIGHT]->sprite = (int)SPRITE::wallCol;
 			GameObjects[WALL_ID_RIGHT]->type = WALL;
-			GameObjects[WALL_ID_RIGHT]->id = 7;
+			GameObjects[WALL_ID_RIGHT]->id = 6;
 		}
 
 		MyScene = SCENE::lobby;

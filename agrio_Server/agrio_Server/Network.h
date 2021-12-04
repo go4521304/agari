@@ -23,10 +23,10 @@ extern short CUR_WINDOW_WIDTH;      //윈도우 x사이즈
 extern short CUR_WINDOW_HEIGHT;
 extern short CUR_WINDOW_START_X;
 extern short CUR_WINDOW_START_Y;
-const int WALL_ID_UP = 4;
-const int WALL_ID_DOWN = 5;
-const int WALL_ID_LEFT = 6;
-const int WALL_ID_RIGHT = 7;
+const int WALL_ID_UP = 3;
+const int WALL_ID_DOWN = 4;
+const int WALL_ID_LEFT = 5;
+const int WALL_ID_RIGHT = 6;
 
 class Network
 {
@@ -72,7 +72,7 @@ public:
 			GameObjects[WALL_ID_UP]->height = objlength;
 			GameObjects[WALL_ID_UP]->sprite = (int)SPRITE::wallRow;
 			GameObjects[WALL_ID_UP]->type = WALL;
-			GameObjects[WALL_ID_UP]->id = 4;
+			GameObjects[WALL_ID_UP]->id = 3;
 			// 아래
 			GameObjects[WALL_ID_DOWN]->isActive = true;
 			GameObjects[WALL_ID_DOWN]->isMove = false;
@@ -82,7 +82,7 @@ public:
 			GameObjects[WALL_ID_DOWN]->height = objlength;
 			GameObjects[WALL_ID_DOWN]->sprite = (int)SPRITE::wallRow;
 			GameObjects[WALL_ID_DOWN]->type = WALL;
-			GameObjects[WALL_ID_DOWN]->id = 5;
+			GameObjects[WALL_ID_DOWN]->id = 4;
 			// 왼쪽
 			GameObjects[WALL_ID_LEFT]->isActive = true;
 			GameObjects[WALL_ID_LEFT]->isMove = false;
@@ -92,7 +92,7 @@ public:
 			GameObjects[WALL_ID_LEFT]->height = WINDOW_HEIGHT;
 			GameObjects[WALL_ID_LEFT]->sprite = (int)SPRITE::wallCol;
 			GameObjects[WALL_ID_LEFT]->type = WALL;
-			GameObjects[WALL_ID_LEFT]->id = 6;
+			GameObjects[WALL_ID_LEFT]->id = 5;
 			// 오른쪽
 			GameObjects[WALL_ID_RIGHT]->isActive = true;
 			GameObjects[WALL_ID_RIGHT]->isMove = false;
@@ -102,7 +102,7 @@ public:
 			GameObjects[WALL_ID_RIGHT]->height = WINDOW_HEIGHT;
 			GameObjects[WALL_ID_RIGHT]->sprite = (int)SPRITE::wallCol;
 			GameObjects[WALL_ID_RIGHT]->type = WALL;
-			GameObjects[WALL_ID_RIGHT]->id = 7;
+			GameObjects[WALL_ID_RIGHT]->id = 6;
 		}
 		//for (int i = 8; i < 20; ++i) {
 		//	GameObjects[i]->isActive = true;

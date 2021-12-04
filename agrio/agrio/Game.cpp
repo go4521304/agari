@@ -620,10 +620,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (isAlreadyConnect == false)
 					ConnectServer();
 				else { // √ ±‚»≠
-					Player* p = reinterpret_cast<Player*>(gameObject[playerID]);;
-					p->curGun = 0;
-					p->state = STATE::idle;
-					p->hp = 50;
+					Player* p = reinterpret_cast<Player*>(gameObject[playerID]);
 					p->animFrame = 2;
 					p->animTimer = 0;
 					for (int i = 0; i < 8; ++i)
