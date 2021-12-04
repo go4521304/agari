@@ -77,7 +77,7 @@ void GameLoop(HWND hWnd)
 		}
 	}
 
-	else if (scene == SCENE::gameover||scene == SCENE::winner)
+	else if (scene == SCENE::gameover || scene == SCENE::winner)
 	{
 
 	}
@@ -145,8 +145,6 @@ void GameLoop(HWND hWnd)
 
 		if (keyAction.space)
 		{
-			//itemTimer -= GetTickCount64() - TIMER;
-
 			if (itemTimer < 0)
 			{
 				if (selectedWeapon == pistol || selectedWeapon == uzi || selectedWeapon == shotgun)
@@ -301,13 +299,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 
 		/*********************************************이미지 로드*****************************************************/
-		gameObject.reserve(100);
+		gameObject.reserve(MAX_OBJECT);
 		for (int i = 0; i < 3; ++i)
 		{
 			Player* player = new Player;
 			gameObject.push_back(player);
 		}
-		for (int i = 3; i < 100; ++i)
+		for (int i = 3; i < MAX_OBJECT; ++i)
 		{
 			GameObject* obj = new GameObject;
 			gameObject.push_back(obj);
@@ -630,6 +628,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					p->animTimer = 0;
 					for (int i = 0; i < 8; ++i)
 						p->items[i] = 0;
+
+					keyAction.space = false;
+					keyAction.up = false;
+					keyAction.down = false;
+					keyAction.left = false;
+					keyAction.right = false;
+					keyAction.reqSend = false;
+
 					cs_packet_login packet;
 					packet.packetSize = sizeof(cs_packet_login);
 					packet.packetType = CS_PACKET_LOGIN;
@@ -923,7 +929,7 @@ void Recv(SOCKET sock) {
 	{
 		sc_packet_move_obj recvPacket;
 		retval += recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-		
+
 		gameObject[(int)recvPacket.objectID]->ObjMove(&recvPacket);
 	}
 	break;
@@ -987,6 +993,11 @@ void Recv(SOCKET sock) {
 		Player* player = reinterpret_cast<Player*>(gameObject[(int)recvPacket.playerID]);
 
 		player->ChangeWeapon(&recvPacket);
+
+		if ((int)recvPacket.playerID == playerID)
+		{
+			selectedWeapon = player->GetcurGun();
+		}
 	}
 	break;
 	default:
