@@ -535,19 +535,6 @@ bool Player::Recv() {
 		}
 	}
 	break;
-	case CS_PACKET_REPLAY:
-	{
-		cs_packet_shoot_bullet recvPacket;
-		retval = recv(sock, reinterpret_cast<char*>(&recvPacket) + 2, pkSize.packetSize - 2, MSG_WAITALL);
-		// 지금 이 플레이어는 한판을 마치고 re를 눌렀다.
-		// 이때 isReady는 아직 true 상태이다 이걸 스위치로 사용한다.
-		if (isReady) {
-			net->ReplayCount++;
-			isReady = false; // 패킷이 여러번 올때 count를 늘리지 않기 위함
-			std::cout << "notice! : " << net->ReplayCount << " \n";
-		}
-	}
-	break;
 	default:
 		std::cout << "잘못된 패킷 전송";
 		break;
