@@ -247,7 +247,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			sprites[(int)SPRITE::btnExit].Load(TEXT("resource/EXIT.png"));
 			sprites[(int)SPRITE::btnReplay].Load(TEXT("resource/REPLAY.png"));
 			sprites[(int)SPRITE::bgTitle].Load(TEXT("resource/startBack(±¸).png"));
-			sprites[(int)SPRITE::bgLobby].Load(TEXT("resource/lobby.png"));
+			sprites[(int)SPRITE::bgLobby].Load(TEXT("resource/lobby1.png"));
 			sprites[(int)SPRITE::bgStage1].Load(TEXT("resource/stage1.png"));
 			sprites[(int)SPRITE::bgEnd].Load(TEXT("resource/endBack.png"));
 
