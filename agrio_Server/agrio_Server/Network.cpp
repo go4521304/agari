@@ -298,8 +298,8 @@ void Network::Update(float elapsedTime) {
 			(GameObjects[i])->isAttack = false;
 			(GameObjects[i])->isReady = false;
 			(GameObjects[i])->velocity = PLAYER_SPEED;
-			(GameObjects[i])->pos.x = (short)800;
-			(GameObjects[i])->pos.y = (short)900;
+			(GameObjects[i])->pos.x = (short)1800;
+			(GameObjects[i])->pos.y = (short)1900;
 			(GameObjects[i])->direction = (char)DIR::N;
 
 			reinterpret_cast<Player*>(GameObjects[i])->hp = 50;						// 체력
