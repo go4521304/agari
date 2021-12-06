@@ -151,14 +151,14 @@ public:
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (false == GameObjects[i]->isActive) return i;
 		}
-		std::cout << "can not return player id" << std::endl;
+		//std::cout << "can not return player id" << std::endl;
 		return -1;
 	}
 	char GetObjID() {
 		for (int i = MAX_USER; i < MAX_OBJECT; ++i) {
 			if (false == GameObjects[i]->isActive) return i;
 		}
-		std::cout << "can not return object id" << std::endl;
+		//std::cout << "can not return object id" << std::endl;
 		return -1;
 	}
 	bool IsPlayer(int id) {

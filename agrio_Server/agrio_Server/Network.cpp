@@ -46,8 +46,8 @@ void Network::LobbyThread() {
 			err_display("accept()");
 			return;
 		}
-		std::cout << "\n[TCP 서버] 클라이언트 접속: IP 주소=" << inet_ntoa(ClientAddr.sin_addr)
-			<< "포트 번호=" << ntohs(ClientAddr.sin_port) << std::endl;
+		std::cout << "\n[TCP Server] Client connect: IP Address = " << inet_ntoa(ClientAddr.sin_addr)
+			<< " , Port Number = " << ntohs(ClientAddr.sin_port) << std::endl;
 
 		reinterpret_cast<Player*> (GameObjects[id])->SetSockId(client_sock, id);
 
@@ -303,7 +303,7 @@ void Network::Update(float elapsedTime) {
 			(GameObjects[i])->pos.y = (short)1900;
 			(GameObjects[i])->direction = (char)DIR::N;
 
-			reinterpret_cast<Player*>(GameObjects[i])->hp = 50;						// 체력
+			reinterpret_cast<Player*>(GameObjects[i])->hp = 50;
 			reinterpret_cast<Player*>(GameObjects[i])->state = STATE::idle;
 			reinterpret_cast<Player*>(GameObjects[i])->curEquip = ITEM::empty;
 				

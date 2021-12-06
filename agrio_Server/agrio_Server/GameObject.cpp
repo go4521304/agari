@@ -281,7 +281,7 @@ void Player::Send(void* buf, int bufSize)
 	if (retval == SOCKET_ERROR) {
 		std::cout << "오류 발생" << (int)id << std::endl;
 	}
-	std::cout << "[TCP 서버]" << (int)id << " : " << retval << "바이트 보냈습니다\n";
+	//std::cout << "[TCP Server]" << (int)id << " : " << retval << "Byte Send\n";
 }
 
 void SetBulletPos(DIR direction, Coordinate& pos, short dist)
@@ -367,8 +367,7 @@ bool Player::Recv() {
 		err_display("recv()");
 		return false;
 	}
-	std::cout << "Size : " << (int)pkSize.packetSize << std::endl;
-	std::cout << "Type : " << (int)pkSize.packetType << std::endl;
+	//std::cout << "["<<(int)id<< " client] Size : " << (int)pkSize.packetSize << " , Type : " <<  (int)pkSize.packetType << std::endl;
 
 	switch (pkSize.packetType)
 	{

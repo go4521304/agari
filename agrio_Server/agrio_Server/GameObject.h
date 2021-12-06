@@ -51,7 +51,7 @@ class Player : public GameObject
 public:
 	char curEquip;
 	STATE state;
-	int hp = 50; // 힐량 확인을 위해 억지로 50으로 설정
+	int hp = 50;
 	short items[5];
 	SOCKET sock;
 	
@@ -62,7 +62,6 @@ public:
 	Player() {
 		for (auto& item : items)
 			item = 0;
-		items[1] = 30; // 임시
 	};
 
 	~Player() {
