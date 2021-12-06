@@ -352,9 +352,9 @@ bool Player::Recv() {
 	{
 	case CS_PACKET_LOGIN:
 	{
-		if (net->MyScene == SCENE::lobby) {
 			cs_packet_login recvPacket;
 			retval = recv(sock, reinterpret_cast<char*>((&recvPacket)) + 2, pkSize.packetSize - 2, MSG_WAITALL);
+		if (net->MyScene == SCENE::lobby) {
 
 
 			std::cout << "id : " << (int)id << std::endl;
