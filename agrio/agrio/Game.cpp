@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "GameFramework.h"
 
-#define SERVERIP	"127.0.0.1"
+#define SERVERIP	"121.173.248.91"
 #define SERVERPORT	8000
 #define BUFSIZE		512
 
@@ -639,9 +639,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					packet.playerSkin = (char)selPlayer;
 					Send(&packet);
 				}
-				while (!isLoginOk);
-				scene = SCENE::lobby;
-				play_button = false;
+				if (isLoginOk)
+				{
+					scene = SCENE::lobby;
+					play_button = false;
+				}
 			}
 			else if (exit_button == true)
 			{
