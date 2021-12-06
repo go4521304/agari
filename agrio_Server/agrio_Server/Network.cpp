@@ -297,6 +297,7 @@ void Network::Update(float elapsedTime) {
 			(GameObjects[i])->isActive = true;	
 			(GameObjects[i])->isAttack = false;
 			(GameObjects[i])->isReady = false;
+			(GameObjects[i])->isMove = false;
 			(GameObjects[i])->velocity = PLAYER_SPEED;
 			(GameObjects[i])->pos.x = (short)1800;
 			(GameObjects[i])->pos.y = (short)1900;
