@@ -33,8 +33,6 @@ public:
 	void PutObj(void* pk);
 	void RemoveObj();
 	virtual void Render(HDC& hdc);
-
-	void test();
 };
 
 /******************************************** Player ********************************************/
@@ -52,7 +50,6 @@ public:
 
 	STATE GetState() { return state; }
 	short GetHp() { return hp; }
-
 	int GetcurGun() { return curGun; }
 	void SetWeapon(int newWeapon) { curGun = newWeapon; }
 
@@ -60,7 +57,6 @@ public:
 	void ChangeWeapon(void* pk);
 	void ChangeHp(void* pk);
 	void GetItem(void* pk);
-	//void ItemCount(void* pk);
 	void UseItem(int index);
 	virtual void Render(HDC& hdc);
 };
@@ -198,16 +194,6 @@ void Player::Render(HDC& hdc)
 		SelectObject(hdc, oldbrush);
 		DeleteObject(hbrush);
 	}
-}
-
-void GameObject::test()
-{
-	isActive = true;
-	width = 100;
-	height = 800;
-	sprite = (int)SPRITE::box;
-	pos.x = 800;
-	pos.y = 900;
 }
 
 std::vector<GameObject*> gameObject;

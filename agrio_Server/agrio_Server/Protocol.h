@@ -1,19 +1,18 @@
 #pragma once
 
-enum class STATE
-{
-	idle, move, attack
-};
 
 //	최대 접속 가능 클라이언트
 const char MAX_USER = 3;
-
+// 최대 오브젝트 개수
 const int MAX_OBJECT = 200;
+
+// 캐릭터의 상태
+enum class STATE { idle, move, attack };
 
 //	총알 발사 방향
 enum class DIR { N, NE, E, SE, S, SW, W, NW };
 
-// Scene
+// 게임의 씬
 enum class SCENE { title, lobby, stage1, gameover, winner };
 
 //	아이템 ID
@@ -28,8 +27,6 @@ const char CS_PACKET_PLAYER_MOVE = 2;
 const char CS_PACKET_PLAYER_STATE = 3;
 const char CS_PACKET_SHOOT_BULLET = 4;
 const char CS_PACKET_USED_ITEM = 5;
-const char CS_PACKET_KEY_DOWN = 6;
-const char CS_PACKET_KEY_UP = 7;
 
 //	패킷 타입(Server->Client)
 const char SC_PACKET_LOGIN_OK = 1;
