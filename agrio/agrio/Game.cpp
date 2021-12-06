@@ -632,18 +632,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					keyAction.left = false;
 					keyAction.right = false;
 					keyAction.reqSend = false;
+				}
+				cs_packet_login packet;
+				packet.packetSize = sizeof(cs_packet_login);
+				packet.packetType = CS_PACKET_LOGIN;
+				packet.playerSkin = (char)selPlayer;
+				Send(&packet);
 
-					cs_packet_login packet;
-					packet.packetSize = sizeof(cs_packet_login);
-					packet.packetType = CS_PACKET_LOGIN;
-					packet.playerSkin = (char)selPlayer;
-					Send(&packet);
-				}
-				if (isLoginOk)
-				{
-					scene = SCENE::lobby;
-					play_button = false;
-				}
+				play_button = false;
+
+				std::cout << "Push Play BTN" << std::endl;
 			}
 			else if (exit_button == true)
 			{
@@ -869,12 +867,6 @@ void ConnectServer()
 
 	if (hThread == NULL)closesocket(sock);
 
-	cs_packet_login packet;
-	packet.packetSize = sizeof(cs_packet_login);
-	packet.packetType = CS_PACKET_LOGIN;
-	packet.playerSkin = (char)selPlayer;
-	Send(&packet);
-
 	isAlreadyConnect = true;
 }
 
@@ -883,7 +875,7 @@ void ConnectServer()
 void Send(void* Packet)
 {
 	int retval = send(sock, reinterpret_cast<char*>(Packet), reinterpret_cast<packet*>(Packet)->packetSize, 0);
-	// std::cout << "[TCP 서버]" << retval << "바이트 보냈습니다\n";
+	std::cout << "[TCP 서버] " << (int)reinterpret_cast<packet*>(Packet)->packetType << "\n";
 }
 
 void Recv(SOCKET sock) {
@@ -915,6 +907,9 @@ void Recv(SOCKET sock) {
 		playerID = (int)recvPacket.playerID;
 		gameObject[playerID]->LoginOk(&recvPacket);
 		isLoginOk = true;
+		scene = SCENE::lobby;
+
+		std::cout << "Recv LoginOK" << std::endl;
 	}
 	break;
 	case SC_PACKET_CHANGE_SCENE:
