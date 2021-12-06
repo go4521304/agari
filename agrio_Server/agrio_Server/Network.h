@@ -110,15 +110,6 @@ public:
 			GameObjects[WALL_ID_RIGHT]->type = WALL;
 			GameObjects[WALL_ID_RIGHT]->id = 6;
 		}
-		//for (int i = 8; i < 20; ++i) {
-		//	GameObjects[i]->isActive = true;
-		//	GameObjects[i]->pos = Coordinate{ short(BLOCK_WIDTH * rand()% WINDOW_WIDTH),  short(BLOCK_HEIGHT* rand() % WINDOW_HEIGHT) };
-		//	GameObjects[i]->width = BLOCK_WIDTH;
-		//	GameObjects[i]->height = BLOCK_HEIGHT;
-		//	GameObjects[i]->sprite = (int)SPRITE::box;
-		//	GameObjects[i]->type = BOX;
-		//	GameObjects[i]->id = i;
-		//}
 		WSADATA wsa;
 		if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 			return;

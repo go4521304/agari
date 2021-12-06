@@ -188,7 +188,6 @@ void Network::SendChangeWeapon(int id, int target)
 void Network::Update(float elapsedTime) {
 	int bufstart = 0;
 	for (auto obj : GameObjects) {
-		//if (!obj)continue;
 		if (false == obj->isActive) continue;
 		obj->Update(elapsedTime, buf, bufstart);
 	}
@@ -393,8 +392,6 @@ void Network::Update(float elapsedTime) {
 		if (false == p->isActive) continue;
 		if (0 >= p->bufSize) continue;
 		p->Send(p->eventPacketBuf, p->bufSize);
-		//memcpy(buf + bufstart, p->eventPacketBuf, p->bufSize);
-		//bufstart += p->bufSize;
 		p->bufSize = 0;
 	}
 

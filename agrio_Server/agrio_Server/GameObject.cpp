@@ -239,8 +239,30 @@ void GameObject::Update(float elapsedTime, char* buf, int& bufStart)
 								case (int)DIR::W:
 									direction = (direction + 4) % 8;
 									break;
-								default:
-									direction = (direction + 2) % 8;
+								case (int)DIR::NE:
+									if (obj->direction == (int)DIR::W)
+										direction = (int)DIR::NW;
+									else
+										direction = (int)DIR::SE;
+									break;
+								case (int)DIR::NW:
+									if (obj->direction == (int)DIR::E)
+										direction = (int)DIR::NE;
+									else
+										direction = (int)DIR::SW;
+									break;
+								case (int)DIR::SE:
+									if (obj->direction == (int)DIR::W)
+										direction = (int)DIR::SW;
+									else
+										direction = (int)DIR::NE;
+									break;
+								case (int)DIR::SW:
+									if (obj->direction == (int)DIR::E)
+										direction = (int)DIR::SE;
+									else
+										direction = (int)DIR::NW;
+
 									break;
 								}
 							}
@@ -367,8 +389,7 @@ bool Player::Recv() {
 		err_display("recv()");
 		return false;
 	}
-	//std::cout << "["<<(int)id<< " client] Size : " << (int)pkSize.packetSize << " , Type : " <<  (int)pkSize.packetType << std::endl;
-
+	
 	switch (pkSize.packetType)
 	{
 	case CS_PACKET_LOGIN:
