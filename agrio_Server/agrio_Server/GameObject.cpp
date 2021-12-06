@@ -349,7 +349,7 @@ void SetBox(int obj_id, char direction, Coordinate pos) {
 	pistol->direction = direction;
 	pistol->velocity = 0;
 	pistol->width = BLOCK_WIDTH;
-	pistol->height = BLOCK_HEIGHT+50;
+	pistol->height = BLOCK_HEIGHT;
 	pistol->id = obj_id;
 	pistol->sprite = (char)SPRITE::box;
 	pistol->type = BOX;

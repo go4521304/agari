@@ -13,8 +13,8 @@ void err_display(const char* msg);
 //상수
 const short BULLET_WIDTH = 11;
 const short BULLET_HEIGHT = 11;
-const short BLOCK_WIDTH = 30;
-const short BLOCK_HEIGHT = 30;
+const short BLOCK_WIDTH = 20;
+const short BLOCK_HEIGHT = 20;
 
 const short WINDOW_WIDTH = 900 * 2;      //윈도우 x사이즈
 const short WINDOW_HEIGHT = 800 * 2;
