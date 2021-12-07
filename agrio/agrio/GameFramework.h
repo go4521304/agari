@@ -1,5 +1,8 @@
 #pragma once
+#ifdef _DEBUG
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+
 #pragma comment(lib, "ws2_32")
 #include "stdfx.h"
 #include"../../agrio_Server/agrio_Server/Protocol.h"
