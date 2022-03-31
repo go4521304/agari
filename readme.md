@@ -13,5 +13,5 @@
 <br>
 
 ## 계획서 및 보고서
-#### [추진 계획서]()
-#### [최종 보고서]()
+#### [추진 계획서](https://github.com/go4521304/agari_Network/blob/master/21NGP%204%ED%8C%80%20%EC%B6%94%EC%A7%84%EA%B3%84%ED%9A%8D%EC%84%9C.pdf)
+#### [최종 보고서](https://github.com/go4521304/agari_Network/blob/master/%5B21NGP-4%ED%8C%80%5DProject%20Progress%20Report%20.pdf)
